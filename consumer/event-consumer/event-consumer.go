@@ -2,8 +2,9 @@ package event_consumer
 
 import (
 	"log"
-	"telegram-url-saver/events"
 	"time"
+
+	"telegram-url-saver/events"
 )
 
 type Consumer struct {

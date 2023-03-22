@@ -7,12 +7,8 @@ import (
 	"net/url"
 	"path"
 	"strconv"
-	"telegram-url-saver/lib/e"
-)
 
-const (
-	getUpdatesMethod  = "getUpdates"
-	sendMessageMethod = "sendMessage"
+	"telegram-url-saver/lib/e"
 )
 
 type Client struct {
@@ -20,6 +16,11 @@ type Client struct {
 	basePath string
 	client   http.Client
 }
+
+const (
+	getUpdatesMethod  = "getUpdates"
+	sendMessageMethod = "sendMessage"
+)
 
 func New(host string, token string) *Client {
 	return &Client{
@@ -34,7 +35,7 @@ func newBasePath(token string) string {
 }
 
 func (c *Client) Updates(offset int, limit int) (updates []Update, err error) {
-	defer func() { err = e.WrapIfErr("can`t get updates", err) }()
+	defer func() { err = e.WrapIfErr("can't get updates", err) }()
 
 	q := url.Values{}
 	q.Add("offset", strconv.Itoa(offset))
@@ -54,21 +55,20 @@ func (c *Client) Updates(offset int, limit int) (updates []Update, err error) {
 	return res.Result, nil
 }
 
-func (c *Client) SendMessage(chatId int, text string) error {
+func (c *Client) SendMessage(chatID int, text string) error {
 	q := url.Values{}
-	q.Add("chat_id", strconv.Itoa(chatId))
+	q.Add("chat_id", strconv.Itoa(chatID))
 	q.Add("text", text)
 
 	_, err := c.doRequest(sendMessageMethod, q)
 	if err != nil {
-		return e.Wrap("can't send nessage: %w", err)
+		return e.Wrap("can't send message", err)
 	}
 
 	return nil
 }
 
 func (c *Client) doRequest(method string, query url.Values) (data []byte, err error) {
-	// const errMsg = "can't do request"
 	defer func() { err = e.WrapIfErr("can't do request", err) }()
 
 	u := url.URL{
@@ -83,16 +83,17 @@ func (c *Client) doRequest(method string, query url.Values) (data []byte, err er
 	}
 
 	req.URL.RawQuery = query.Encode()
+
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
-
 	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
+
 	return body, nil
 }

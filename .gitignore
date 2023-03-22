@@ -3,7 +3,7 @@
 *.dll
 *.so
 *.dylib
-
+*.db
 storage_files/
 
 # Test binary, built with `go test -c`
